@@ -6,6 +6,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npx nest build bff
+CMD ["npx", "nest", "start", "bff", "--watch"]
 
-CMD ["node", "dist/apps/bff/main.js"]
+# COPY . .
+# RUN npx nest build bff
+# CMD ["node", "dist/apps/bff/main.js"]

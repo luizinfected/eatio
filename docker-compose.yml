@@ -8,8 +8,13 @@ services:
     build:
       context: .
       dockerfile: ./apps/bff/Dockerfile
+    volumes:
+      - .:/app
     ports:
       - "3000:3000"
+      - "3001:3001"
+    env_file:
+      - ./apps/bff/.env
     depends_on:
       - nats
   
@@ -17,7 +22,29 @@ services:
     build:
       context: .
       dockerfile: ./apps/user/Dockerfile
+    volumes:
+      - .:/app
+    env_file:
+      - ./apps/user/.env
     depends_on:
       - nats
-    # ports:
-      # -"8080:80"
+  restaurant:
+    build:
+      context: .
+      dockerfile: ./apps/restaurant/Dockerfile
+    volumes:
+      - .:/app
+    env_file:
+      - ./apps/restaurant/.env
+    depends_on:
+      - nats
+  order:
+    build:
+      context: .
+      dockerfile: ./apps/order/Dockerfile
+    volumes:
+      - .:/app
+    env_file:
+      - ./apps/order/.env
+    depends_on:
+      - nats

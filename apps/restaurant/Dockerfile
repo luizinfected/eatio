@@ -6,6 +6,9 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npx nest build restaurant
+CMD ["npx", "nest", "start", "restaurant", "--watch"]
 
-CMD ["node", "dist/apps/restaurant/main.js"]
+# prod
+# COPY . .
+# RUN npx nest build restaurant
+# CMD ["node", "dist/apps/restaurant/main.js"]

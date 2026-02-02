@@ -24,6 +24,12 @@
     "paths": {
       "#models": [
         "./prisma/generated/client.ts"
+      ],
+      "@app/common": [
+        "libs/common/src"
+      ],
+      "@app/common/*": [
+        "libs/common/src/*"
       ]
     },
     "baseUrl": "./"

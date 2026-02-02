@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { DevtoolsModule } from '@nestjs/devtools-integration';
 
 @Module({
   imports: [
@@ -28,8 +29,12 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         },
       },
     ]),
+    DevtoolsModule.register({
+      http: process.env.NODE_ENV !== 'production',
+      port: 3001,
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Logger],
 })
 export class AppModule {}

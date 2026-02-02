@@ -1,15 +1,20 @@
-import { Controller, Get } from '@nestjs/common';
+import type { User } from '../prisma/generated/client';
+import { Body, Controller, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { MessagePattern } from '@nestjs/microservices';
 
-@Controller()
+@Controller('/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @MessagePattern('getUser')
-  @Get()
-  getHello(data: object) {
-    const newData = { ...data, microservice: 'user' };
+  getHello(data: { id: string }) {
+    const newData = { id: data.id, microservice: 'user' };
     return newData;
+  }
+
+  @MessagePattern('createUser')
+  createUser(@Body() createUser: User): User {
+    return this.userService.createUser(createUser);
   }
 }

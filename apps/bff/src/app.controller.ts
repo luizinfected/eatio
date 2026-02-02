@@ -1,25 +1,36 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { AppService } from './app.service';
-import type { ClientProxy } from '@nestjs/microservices';
-import type { Observable } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 
-@Controller()
+interface User {
+  id: string;
+  name: string;
+  lastName: string;
+  email: string;
+  // Add other fields from your Prisma User model
+}
+@Controller('user')
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    @Inject('USER_SERVICE') private readonly client: ClientProxy,
-  ) {}
+  constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get(':id')
+  async getUser(@Param('id') id: string): Promise<User> {
+    const userObservable = this.appService.getUser(id);
+    return await lastValueFrom(userObservable);
   }
 
-  @Get('user')
-  getUser(): Observable<string> {
-    return this.client.send('getUser', {
-      name: 'luiz',
-    });
-    // return 'ola';
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async createUser(@Body() userDto: User) {
+    await lastValueFrom(this.appService.createUser(userDto));
+    return { message: 'User created successfully' };
   }
 }
