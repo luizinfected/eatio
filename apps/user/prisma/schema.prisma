@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum DocumentType {
+  RG
+  CPF
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum Role {
+  USER
+  ADMIN
+  OWNER
+}
+
+model User {
+  id             String @id @default(uuid())
+  name           String
+  lastName       String
+  email          String @unique
+  documentNumber String @unique
+  documentType   DocumentType
+  type           Role
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model UserAddress {
+  id          String @id @default(uuid())
+  street      String
+  city        String
+  state       String
+  postalCode  String
+  countryCode String
+  userId      String
+}

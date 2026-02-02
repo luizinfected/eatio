@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum DocumentType {
+  RG
+  CPF
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum Role {
+  USER
+  ADMIN
+  OWNER
+}
+
+model Order {
+  id            String @id @default(uuid())
+  userId        String
+  restaurantId  String
+  status        OrderStatus
+  createdAt     DateTime @default(now())
+}
+
+model OrderItem {
+  id        String @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  unitPrice Int
+}

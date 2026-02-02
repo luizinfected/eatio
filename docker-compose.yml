@@ -1,0 +1,23 @@
+services: 
+  nats:
+    image: nats:latest
+    ports: 
+      - "4222:4222"
+
+  bff:
+    build:
+      context: .
+      dockerfile: ./apps/bff/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - nats
+  
+  user: 
+    build:
+      context: .
+      dockerfile: ./apps/user/Dockerfile
+    depends_on:
+      - nats
+    # ports:
+      # -"8080:80"
