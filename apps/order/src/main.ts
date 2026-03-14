@@ -9,6 +9,7 @@ async function bootstrap(): Promise<void> {
       transport: Transport.NATS,
       options: {
         servers: ['nats://nats:4222'],
+        name: 'ORDER_SERVICE',
       },
     },
   );
