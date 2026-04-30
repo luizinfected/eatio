@@ -1,10 +1,12 @@
-services: 
+services:
   nats:
     image: nats:latest
-    ports: 
+    container_name: eatio-nats
+    ports:
       - "4222:4222"
 
   bff:
+    container_name: eatio-bff
     build:
       context: .
       dockerfile: ./apps/bff/Dockerfile
@@ -17,8 +19,9 @@ services:
       - ./apps/bff/.env
     depends_on:
       - nats
-  
-  user: 
+
+  user:
+    container_name: eatio-user
     build:
       context: .
       dockerfile: ./apps/user/Dockerfile
@@ -29,6 +32,7 @@ services:
     depends_on:
       - nats
   restaurant:
+    container_name: eatio-restaurant
     build:
       context: .
       dockerfile: ./apps/restaurant/Dockerfile
@@ -39,6 +43,7 @@ services:
     depends_on:
       - nats
   order:
+    container_name: eatio-order
     build:
       context: .
       dockerfile: ./apps/order/Dockerfile

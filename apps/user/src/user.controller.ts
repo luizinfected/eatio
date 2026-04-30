@@ -18,7 +18,7 @@ export class UserController {
   }
 
   @MessagePattern('createUser')
-  createUser(@Body() createUser: User): User {
+  createUser(@Body() createUser: User): Promise<User> {
     return this.userService.createUser(createUser);
   }
 }

@@ -4,27 +4,11 @@
 generator client {
   provider = "prisma-client"
   output   = "./generated"
+  // moduleFormat = "esm"
 }
 
 datasource db {
   provider = "sqlite"
-}
-
-enum DocumentType {
-  RG
-  CPF
-}
-
-enum OrderStatus {
-  PENDING
-  COMPLETED
-  FAILED
-}
-
-enum Role {
-  USER
-  ADMIN
-  OWNER
 }
 
 model User {
@@ -47,4 +31,21 @@ model UserAddress {
   postalCode  String
   countryCode String
   userId      String
+}
+
+enum DocumentType {
+  RG
+  CPF
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum Role {
+  USER
+  ADMIN
+  OWNER
 }
