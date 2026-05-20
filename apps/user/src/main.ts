@@ -1,19 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { UserModule } from './user.module';
-import { Transport, type MicroserviceOptions } from '@nestjs/microservices';
+import { UserModule } from './modules/user.module';
 
-async function bootstrap(): Promise<void> {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    UserModule,
-    {
-      transport: Transport.NATS,
-      options: {
-        servers: ['nats://nats:4222'],
-        name: 'USER_SERVICE',
-      },
-    },
-  );
+async function bootstrap() {
+  const app = await NestFactory.create(UserModule, {
+    snapshot: true,
+  });
 
-  await app.listen();
+  await app.listen(process.env.PORT ?? 3001);
 }
+
 void bootstrap();

@@ -41,6 +41,11 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 .env.local
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
+.terraformrc
+.terraform.lock.hcl
 
 # temp directory
 .temp
