@@ -1,0 +1,109 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "./generated"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── User ────────────────────────────────────────────────────────────────────
+
+model User {
+  id             String      @id @default(uuid())
+  name           String
+  lastName       String
+  email          String      @unique
+  password       String      
+  documentNumber String      @unique
+  documentType   DocumentType
+  type           Role        @default(USER)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  address        UserAddress?
+  orders         Order[]
+}
+
+model UserAddress {
+  id          String @id @default(uuid())
+  street      String
+  city        String
+  state       String
+  postalCode  String
+  countryCode String
+  userId      String @unique
+  user        User   @relation(fields: [userId], references: [id])
+}
+
+// ─── Restaurant ──────────────────────────────────────────────────────────────
+
+model Restaurant {
+  id        String             @id @default(uuid())
+  ownerId   String
+  name      String
+  createdAt DateTime           @default(now())
+  address   RestaurantAddress?
+  products  Product[]
+  orders    Order[]
+}
+
+model RestaurantAddress {
+  id           String     @id @default(uuid())
+  restaurantId String     @unique
+  street       String
+  city         String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+}
+
+model Product {
+  id           String     @id @default(uuid())
+  restaurantId String
+  name         String
+  unitPrice    Int
+  description  String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  orderItems   OrderItem[]
+}
+
+// ─── Order ───────────────────────────────────────────────────────────────────
+
+model Order {
+  id           String      @id @default(uuid())
+  userId       String
+  restaurantId String
+  status       OrderStatus
+  createdAt    DateTime    @default(now())
+  user         User        @relation(fields: [userId], references: [id])
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id])
+  items        OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  unitPrice Int
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum DocumentType {
+  RG
+  CPF
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum Role {
+  USER
+  ADMIN
+  OWNER
+}

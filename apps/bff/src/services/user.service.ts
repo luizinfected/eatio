@@ -1,30 +1,43 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { User } from 'apps/user/prisma/generated/client';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import type { UserDTO } from '../dtos/user.dto';
 import { SqsClient } from '../clients/sqs.client';
-import axios from 'axios';
+import { UserGateway, USER_GATEWAY_TOKEN } from '../gateways/user.gateway';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly logger: Logger,
     private readonly sqsClient: SqsClient,
+    @Inject(USER_GATEWAY_TOKEN)
+    private readonly userGateway: UserGateway,
   ) {}
 
-  createUser(userDto: User): void {
+  async createUser(userDto: UserDTO): Promise<UserDTO> {
     this.logger.log('Creating User', UserService.name);
-    this.sqsClient.sendMessage(userDto, `${process.env.USER_SQS_QUEUE_URL}`);
+    return await this.userGateway.createUser(userDto);
   }
 
-  async getUser(id: string): Promise<User> {
-    this.logger.log(`Retrieving Information from user microservice`);
-    try {
-      const url = `${process.env.USER_SERVICE_URL}/user/${id}`;
-      this.logger.log(`Making GET request to ${url}`);
-      const response = await axios.get(url);
-      return response.data;
-    } catch (error: any) {
-      this.logger.error(`Error retrieving user information: ${error.message}`);
-      throw new Error('Failed to retrieve user information');
-    }
+  async getUser(id: string): Promise<UserDTO> {
+    this.logger.log(
+      `Retrieving Information from user id: ${id}`,
+      UserService.name,
+    );
+    return await this.userGateway.getUser(id);
+  }
+
+  async getUsers(): Promise<UserDTO[]> {
+    this.logger.log(`Retrieving all users`);
+    const users = await this.userGateway.getUsers();
+    return users || [];
+  }
+
+  async updateUser(id: string, userDto: UserDTO): Promise<UserDTO> {
+    this.logger.log(`Updating user id: ${id}`);
+    return await this.userGateway.updateUser(id, userDto);
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    this.logger.log(`Deleting user id: ${id}`);
+    await this.userGateway.deleteUser(id);
   }
 }
