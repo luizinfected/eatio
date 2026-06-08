@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
-import { User, Role } from '../../prisma/generated/client';
+import { User } from '../../prisma/generated/client';
 
 @Injectable()
 export class UserService {
@@ -30,15 +30,33 @@ export class UserService {
       throw new Error('User with this email already exists');
     }
 
-    const userPayload = {
-      ...user,
-      type: Role.USER,
-    };
-
-    return this.prisma.user.create({ data: userPayload });
+    return this.prisma.user.create({ data: user });
   }
 
-  async getUser(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { id } });
+  async getUser(
+    id: string,
+    include?: 'order' | 'address',
+  ): Promise<User | null> {
+    const includeOptions = {
+      address: include === 'address' ? true : false,
+      order: include === 'order' ? true : false, // need to work better on the order query TBD.
+    };
+    return this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        address: includeOptions.address,
+      },
+    });
+  }
+
+  async getUsers(skip: number, take: number): Promise<User[]> {
+    return this.prisma.user.findMany({
+      skip,
+      take,
+    });
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await this.prisma.user.delete({ where: { id } });
   }
 }
