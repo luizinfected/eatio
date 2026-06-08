@@ -25,9 +25,9 @@ export class UserService {
     return await this.userGateway.getUser(id);
   }
 
-  async getUsers(): Promise<UserDTO[]> {
+  async getUsers(skip, take): Promise<UserDTO[]> {
     this.logger.log(`Retrieving all users`);
-    const users = await this.userGateway.getUsers();
+    const users = await this.userGateway.getUsers(skip, take);
     return users || [];
   }
 

@@ -43,11 +43,16 @@ export class UserGateway {
     }
   }
 
-  async getUsers(): Promise<UserDTO[]> {
+  async getUsers(skip: string, take: string): Promise<UserDTO[]> {
     this.logger.log(`Retrieving all users`);
     try {
       const url = `${process.env.USER_SERVICE_URL}/user`;
-      const response = await axios.get<UserDTO[]>(url);
+      const response = await axios.get<UserDTO[]>(url, {
+        params: {
+          skip,
+          take,
+        },
+      });
       return response.data;
     } catch (error: any) {
       this.logger.error(`Error retrieving users information: ${error.message}`);

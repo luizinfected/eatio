@@ -1,4 +1,14 @@
-import { Get, Param, Logger, Post, Body, Controller } from '@nestjs/common';
+import {
+  Get,
+  Param,
+  Logger,
+  Post,
+  Body,
+  Controller,
+  Query,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import type { UserDTO } from '../dtos/user.dto';
 import { UserService } from '../services/user.service';
 
@@ -16,9 +26,12 @@ export class UserController {
   }
 
   @Get()
-  async getUsers(): Promise<UserDTO[]> {
+  async getUsers(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
+  ): Promise<UserDTO[]> {
     this.logger.log(`Retrieving all users`, UserController.name);
-    return await this.userService.getUsers();
+    return await this.userService.getUsers(skip, take);
   }
 
   @Post()
@@ -26,6 +39,7 @@ export class UserController {
     return await this.userService.createUser(userDto);
   }
 
+  @Put(':id')
   async updateUser(
     @Param('id') id: string,
     @Body() userDto: UserDTO,
@@ -34,6 +48,7 @@ export class UserController {
     return await this.userService.updateUser(id, userDto);
   }
 
+  @Delete(':id')
   async deleteUser(@Param('id') id: string): Promise<void> {
     this.logger.log(`Deleting user id: ${id}`, UserController.name);
     await this.userService.deleteUser(id);
